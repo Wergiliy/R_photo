@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import  requests
-import os
+
 
 j = 1
 
@@ -9,17 +9,18 @@ HEADERS = {
                 'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36'
             }
 def first_step(intr, url, HEADERS, j, bolPrint):
+    result=[]
     try:
-        with open('txt\links.txt', 'w') as f:
-            for i in range(intr):
-                URL = url+str(i*42)
+
+        for i in range(intr):
+            URL = url+str(i*42)
 
 
-            response =requests.get(URL,  HEADERS)
-            soup = BeautifulSoup(response.content, 'html.parser')
-            items = soup.findAll('span', 'thumb')
-            comps = []
-
+        response =requests.get(URL,  HEADERS)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        items = soup.findAll('span', 'thumb')
+        comps = []
+        try:
             for item in items:
                 comps.append({
                     'link': item.find('a').get('href')
@@ -31,87 +32,99 @@ def first_step(intr, url, HEADERS, j, bolPrint):
 
 
             for comp in comps:
-                f.write('https://rule34.xxx/' + comp['link']+'\n')
+            #    f.write('https://rule34.xxx/' + comp['link']+'\n')
+                result.append('https://rule34.xxx/' + comp['link'])
+        except:
+            print('Something wrong.(I:2)')
     except:
-        print('Something wrong.')
-        return
+        print('Something wrong.(I:1)')
+    return result
 
-def second_step(HEADERS, bolPrint):
-    shirt = True
+
+def second_step(HEADERS, bolPrint, result):
     links = []
     res = []
     global iterred
-    iterred = 1
-    try:
-        with open('txt\links.txt', 'r') as f:
-            links.append(f.read().split('\n'))
-        with open('txt\links1.txt', 'w') as f:
-            for i in range(len(links)):
-                for j in range(len(links[i]) - 1):
-                    URL = links[i][j]
+    iterred = 0
+    global tags
+    tags=[]
 
+    for i in range(len(result)):
+        try:
+            CC=[]
+            URL = result[i]
 
-                    response = requests.get(URL, HEADERS)
-                    soup = BeautifulSoup(response.content, 'html.parser')
-                    #videos = soup.findAll('video')
-                    videos = soup.findAll('source')
-                    items = soup.findAll('img')
-                    comps = []
-                    compes = []
+            response = requests.get(URL, HEADERS)
+            soup = BeautifulSoup(response.content, 'html.parser')
+            videos = soup.findAll('source')
+            items = soup.findAll('img')
+            comps = []
+            compes = []
 
-                    for item in items:
-                        #f.write(item.get('src') + '\n')
-                        compes.append(
-                            item.get('src')
-                        )
-                    for video in videos:
-                        f.write(video.get('src')+'\n')
-                        #comps.append(
-                        #    video.get('src')
-                        #)
-                    firt = compes[2]
-                    res.append(firt)
-                    """ Убирает ссылки на фото с футболками ( исправить ) """
+            for item in items:
+                compes.append(item.get('src'))
+                CC.append(item.get('alt'))
+            for video in videos:
+                compes.append(video.get('src'))
+                CC.append((video.get('alt')))
+
+            firt = compes[2]
+            res.append(firt)
+
+            th = True
+            while th:
+                if 'https://rule34.xxx/images/shirt2.jpg' in res:
                     th = True
-                    while th:
-                        if 'https://rule34.xxx/images/shirt2.jpg' in res:
-                            th = True
-                        else:
-                            th = False
-                            continue
-                        res.remove('https://rule34.xxx/images/shirt2.jpg')
-                    if bolPrint == 1:
-                        print('(II)Completed ' + str(iterred)+'/'+str(len(links[i])-1) )
-                    iterred += 1
+                else:
+                    th = False
+                    continue
+                res.remove('https://rule34.xxx/images/shirt2.jpg')
+
+            iterred += 1
+            CC.pop(0)
+            CC.pop(2)
+            CC.pop(0)
+            tags.append(CC[0]) #TAGs for TG
 
 
-                for compl in res:
-                    f.write(compl +'\n')
-    except:
-        print('Something wrong.')
-        return
 
-def final(bolPrint):
-    links = []
+
+            if bolPrint == 1:
+                print('(II)Completed ' + str(iterred)+'/'+str(len(result)))
+        except:
+            print('Something wrong.')
+            continue
+    for i in range(len(tags)):
+        tags[i]=tags[i].split(' ')
+    for i in range(len(tags)):
+        for j in range(len(tags[i])):
+            tags[i][j]='#'+tags[i][j]
+    print(tags)
+    return res
+
+
+
+
+
+def final(bolPrint, rest1):
+
     global iter
     iter = 1
-    try:
-        with open('txt\links1.txt', 'r') as f:
-            links.append(f.read().split('\n'))
-            links = links[0]
-        links.pop(-1)
+    #try:
 
-        for i in range(len(links)):
+    links = rest1
+    for i in range(len(links)):
+        try:
             if 'jpg' in links[i]:
-                name = str(iter) + '.jpg'
+                name = str(i) + '.jpg'
             elif 'jpeg' in links[i]:
-                name = str(iter) + '.jpeg'
+                name = str(i) + '.jpeg'
             elif 'png' in links[i]:
-                name = str(iter) + '.png'
+                name = str(i) + '.png'
             elif 'gif' in links[i]:
-                name = str(iter) + '.gif'
+                name = str(i) + '.gif'
             elif 'mp4' in links[i]:
-                name = str(iter) + '.mp4'
+                name = str(i) + '.mp4'
             url = links[i]
             r = requests.get(url)
             if bolPrint==1:
@@ -120,9 +133,9 @@ def final(bolPrint):
             with open(name, 'bw') as f:
 
                 f.write(r.content)
-    except:
-        print('Something wrong.')
-        return
+        except:
+            print('Something wrong.')
+            continue
 if __name__ == '__main__':
     url = input('Send link (from r34) => ')+'&pid='
     global bolPrint
@@ -130,11 +143,11 @@ if __name__ == '__main__':
     intr = int(input('How match pages => '))
     if bolPrint == 1:
         print('Step I:')
-    first_step(intr, url, HEADERS, j, bolPrint)
+    rest=first_step(intr, url, HEADERS, j, bolPrint)
     if bolPrint ==1:
         print('Step II:')
-    second_step(HEADERS, bolPrint)
+    rest1=second_step(HEADERS, bolPrint, rest)
     if bolPrint == 1:
         print('Step III: ')
-    final(bolPrint)
+    final(bolPrint, rest1)
     print('Done! ' + str(iter-1) +' media file`s has been downloaded.')
