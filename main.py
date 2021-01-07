@@ -72,12 +72,14 @@ def second_step(HEADERS, bolPrint):
                     firt = compes[2]
                     res.append(firt)
                     """ Убирает ссылки на фото с футболками ( исправить ) """
-                    #shirt =True
-                    #while shirt:
-                    #    for i in range(len(res)):
-                    #       if res[i] =='https://rule34.xxx/images/shirt2.jpg':
-                    #            res.remove('https://rule34.xxx/images/shirt2.jpg')
-                    #        else: shirt =False
+                    th = True
+                    while th:
+                        if 'https://rule34.xxx/images/shirt2.jpg' in res:
+                            th = True
+                        else:
+                            th = False
+                            continue
+                        res.remove('https://rule34.xxx/images/shirt2.jpg')
                     if bolPrint == 1:
                         print('(II)Completed ' + str(iterred)+'/'+str(len(links[i])-1) )
                     iterred += 1
