@@ -27,7 +27,7 @@ def main2(message):
             url = links[2]
 
 
-        elif 'tags - ' in message.text:
+        elif 'tags - ' in message.text or 'Tags - ' in message.text:
             tagsz = message.text
             tags = tagsz.split()
             tags.pop(0)
@@ -40,7 +40,7 @@ def main2(message):
             tagMark1 = 1
             print(tagMark1)
             print(prov_d)
-        elif 'page - ' in message.text:
+        elif 'page - ' in message.text or 'Page - ' in message.text:
             page = message.text
             pages = page.split()
             page1 = pages[2]
@@ -62,10 +62,10 @@ def main2(message):
             print(tagss)
 
             url = 'https://rule34.xxx/index.php?page=post&s=list&tags='+tagss
-            #with open('logs.txt', 'w+') as f:
-            #    date =str( datetime.now().strftime("%d/%m/%Y, %H:%M:%S"))
-            #    print(type(date))
-            #    f.writelines('['+date+'] - ' + message.chat.id +' :'+ url)
+            with open('logs.txt', 'a') as f:
+                date = str(datetime.now())
+                print(type(date))
+                f.writelines('['+date+'] - ' + str(message.chat.id)+'( '+ message.chat.username + '; '+message.from_user.first_name+' )'+' : '+ url+'\n')
             print(page1 + ' ' + url)
             config.links(url, int(page1), bot, message)
 
