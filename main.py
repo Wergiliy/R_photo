@@ -13,7 +13,9 @@ url = ''
 tagss = ''
 @bot.message_handler(commands=['start'])
 def welcome(message):
-    bot.send_message(message.chat.id, 'Hi!')
+    bot.send_message(message.chat.id, 'Бот парсит https://rule34.xxx/index.php .\n \n Чтобы использовать его нужно написать: \n\n (T)tags - ваши тэги (если есть пробелы, замените их на "_") \n\n (P)page - количество страниц (1 страница = 42 медиа)')
+    with open('1.webp', 'rb') as sticker:
+        bot.send_sticker(message.chat.id, sticker)
 
 @bot.message_handler(content_types=['text'])
 def main2(message):
@@ -26,8 +28,11 @@ def main2(message):
             links = link2.split()
             url = links[2]
 
+        elif '/logs' in message.text and message.chat.id == 572678552:
+            with open('logs.txt', 'r') as v:
+                bot.send_document(message.chat.id, v)
 
-        elif 'tags - ' in message.text or 'Tags - ' in message.text:
+        elif 'tags - ' in message.text or 'Tags - ' in message.text or 'T' in message.text:
             tagsz = message.text
             tags = tagsz.split()
             tags.pop(0)
@@ -40,7 +45,7 @@ def main2(message):
             tagMark1 = 1
             print(tagMark1)
             print(prov_d)
-        elif 'page - ' in message.text or 'Page - ' in message.text:
+        elif 'page - ' in message.text or 'Page - ' in message.text or 'P' in message.text:
             page = message.text
             pages = page.split()
             page1 = pages[2]
@@ -50,6 +55,7 @@ def main2(message):
         if prov_d ==1 and prov == 1 and tagMark1 ==0:
             print(page1 +' '+ url)
             config.links(url, int(page1), bot, message)
+
 
             prov = 0
             prov_d = 0
@@ -68,7 +74,7 @@ def main2(message):
                 f.writelines('['+date+'] - ' + str(message.chat.id)+'( '+ message.chat.username + '; '+message.from_user.first_name+' )'+' : '+ url+'\n')
             print(page1 + ' ' + url)
             config.links(url, int(page1), bot, message)
-
+            bot.send_message(message.chat.id, 'Done!')
             tagMark1 = 0
             prov_d = 0
 
