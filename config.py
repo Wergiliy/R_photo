@@ -84,6 +84,7 @@ def media(urls, bot, message):
                     bot.send_video(message.chat.id, res, caption=tstr)
                 elif 'mp4' in res:
                     bot.send_video(message.chat.id, res, caption=tstr)
+                bot.send_document(message.chat.id, res)
                 print('(II)Complete ' + str(k + 1) + '/' + str(j - 1) + ' - ' + urls[k])
             except Exception as e:
                 print('II(2)')
